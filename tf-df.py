@@ -108,13 +108,48 @@ print(df.sort_values("Doc 1", ascending=False).head(15))
 # -------------------------
 # Visualization
 # -------------------------
-top_words = df["Doc 1"].sort_values(ascending=False).head(5)
+top_words = df["Doc 1"].sort_values(ascending=False).head(20)
 
 plt.figure(figsize=(6, 4))
 top_words.plot(kind="barh", title="Top TF-IDF Words in Document 1")
 plt.xlabel("TF-IDF Score")
 plt.tight_layout()
-plt.savefig("first_doc_with_nltk.png", dpi=300)
+plt.savefig("first_doc_with_nltk_20_words.png", dpi=300)
 plt.close()
 
 print("\nSaved plot as first_doc.png")
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Use the 'df' from the previous TF-IDF example
+# Filter for top 5 terms by max score across documents
+df['max_score'] = df.max(axis=1)
+df_top = df.sort_values('max_score', ascending=False).head(20)
+df_top = df_top.drop('max_score', axis=1)
+
+data = df_top.values
+terms = df_top.index
+docs = df_top.columns
+
+fig, ax = plt.subplots()
+im = ax.imshow(data, cmap='YlGnBu')
+
+# Labels
+ax.set_xticks(np.arange(len(docs)))
+ax.set_yticks(np.arange(len(terms)))
+ax.set_xticklabels(docs)
+ax.set_yticklabels(terms)
+
+# Rotate the tick labels and set their alignment.
+plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+# Colorbar
+cbar = ax.figure.colorbar(im, ax=ax)
+cbar.ax.set_ylabel("TF-IDF Score", rotation=-90, va="bottom")
+
+plt.title("Top Terms Heatmap")
+plt.tight_layout()
+plt.show()
+plt.savefig("heatmap.png", dpi=300)
